@@ -120,51 +120,39 @@ const render = (indInput) => {
     list.removeChild(list.firstChild);
   }
 
-  allCost ? allCostText.innerText = `Итого: ${allCost || 0} р.` : allCostText.innerText = 'Итого: 0 р.';
+  allCostText.innerText = `Итого: ${allCost || 0} р.`;
 
   allPurchase.forEach((element, index) => {
     const purchase = document.createElement('div');
     purchase.className = 'block-purchase';
 
-    let mainText = '';
-    let dateText = '';
-    let costText = '';
-    let blockImg = '';
-    let imageEdit = '';
-    let imageDelete = '';
-    let mainTextInput = '';
-    let costTextInput = '';
-    let dateTextInput = '';
-    let imageClose = '';
-    let imageDone = '';
+    const blockImg = document.createElement('div');
+    blockImg.className = 'block-img';
 
     if (index === indInput) {
-      mainTextInput = document.createElement('input');
+      const mainTextInput = document.createElement('input');
       mainTextInput.type = 'text';
       mainTextInput.className = 'main-inf-input';
       mainTextInput.id = 'id-main-inf-input';
       mainTextInput.value = allPurchase[index].text;
 
-      dateTextInput = document.createElement('input');
+      const dateTextInput = document.createElement('input');
       dateTextInput.type = 'text';
       dateTextInput.className = 'main-inf-input-date';
       dateTextInput.id = 'id-main-inf-input-date';
       dateTextInput.value = allPurchase[index].date;
 
-      costTextInput = document.createElement('input');
+      const costTextInput = document.createElement('input');
       costTextInput.type = 'number';
       costTextInput.className = 'cost-one-input';
       costTextInput.id = 'id-cost-one-input';
       costTextInput.value = allPurchase[index].cost;
 
-      blockImg = document.createElement('div');
-      blockImg.className = 'block-img';
-
-      imageDone = document.createElement('img');
+      const imageDone = document.createElement('img');
       imageDone.src = 'Images/tick.png';
       imageDone.onclick = () => onClickDone(index);
 
-      imageClose = document.createElement('img');
+      const imageClose = document.createElement('img');
       imageClose.src = 'Images/close.png';
       imageClose.onclick = () => onClickClose();
 
@@ -174,32 +162,24 @@ const render = (indInput) => {
       purchase.appendChild(mainTextInput);
       purchase.appendChild(dateTextInput);
       purchase.appendChild(costTextInput);
-      purchase.appendChild(blockImg);
-
-      list.appendChild(purchase);
-
-      blockAllCost.appendChild(allCostText);
     } else {
-      mainText = document.createElement('p');
+      const mainText = document.createElement('p');
       mainText.className = 'main-inf';
       mainText.innerText = `${index + 1}) ${element.text}`;
 
-      dateText = document.createElement('p');
+      const dateText = document.createElement('p');
       dateText.className = 'date';
       dateText.innerText = `${element.date}`;
 
-      costText = document.createElement('p');
+      const costText = document.createElement('p');
       costText.className = 'cost-one';
       costText.innerText = `${element.cost} р.`
 
-      blockImg = document.createElement('div');
-      blockImg.className = 'block-img';
-
-      imageEdit = document.createElement('img');
+      const imageEdit = document.createElement('img');
       imageEdit.src = 'Images/pencil.png';
       imageEdit.onclick = () => onClickEdit(index);
 
-      imageDelete = document.createElement('img');
+      const imageDelete = document.createElement('img');
       imageDelete.src = 'Images/delete.png';
       imageDelete.onclick = () => onClickDelete(index);
 
@@ -209,11 +189,12 @@ const render = (indInput) => {
       purchase.appendChild(mainText);
       purchase.appendChild(dateText);
       purchase.appendChild(costText);
-      purchase.appendChild(blockImg);
-
-      list.appendChild(purchase);
-
-      blockAllCost.appendChild(allCostText);
     }
+
+    purchase.appendChild(blockImg);
+
+    list.appendChild(purchase);
+
+    blockAllCost.appendChild(allCostText);
   });
 }
