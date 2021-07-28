@@ -1,34 +1,27 @@
 let allPurchase = JSON.parse(localStorage.getItem('purchase')) || [];
 
-let valInput1 = ''
-let input1 = null;
+let valInputAddText = ''
+let inputAddTest = null;
 
-let valInput2 = ''
-let input2 = null;
+let valInputAddCost = ''
+let inputAddCost = null;
 
-let valInputText = ''
-let inputText = null;
-let valInputDate = ''
-let inputDate = null;
-let valInputCost = ''
-let inputCost = null;
+const now = new Date();
+const dd = String(now.getDate()).padStart(2, '0');
+const mm = String(now.getMonth() + 1).padStart(2, '0');
+const yyyy = now.getFullYear();
+const today = mm + '/' + dd + '/' + yyyy;
 
-let now = new Date();
-let dd = String(now.getDate()).padStart(2, '0');
-let mm = String(now.getMonth() + 1).padStart(2, '0');
-let yyyy = now.getFullYear();
-let today = mm + '/' + dd + '/' + yyyy;
-
-let allCost = JSON.parse(localStorage.getItem('allCost'));
+let allCost = JSON.parse(localStorage.getItem('allCost')) || 0;
 let blockAllCost = '';
 let allCostText = '';
 
 window.onload = () => {
-  input1 = document.getElementById('input-id-1');
-  input1.addEventListener('change', updateValue1);
+  inputAddTest = document.getElementById('input-id-1');
+  inputAddTest.addEventListener('change', updateValue1);
 
-  input2 = document.getElementById('input-id-2');
-  input2.addEventListener('change', updateValue2);
+  inputAddCost = document.getElementById('input-id-2');
+  inputAddCost.addEventListener('change', updateValue2);
 
   localStorage.setItem('allCost', JSON.stringify(allCost));
   localStorage.setItem('purchase', JSON.stringify(allPurchase));
@@ -42,32 +35,32 @@ window.onload = () => {
 }
 
 const updateValue1 = (event) => {
-  valInput1 = event.target.value;
+  valInputAddText = event.target.value;
 }
 
 const updateValue2 = (event) => {
-  valInput2 = Number(event.target.value);
+  valInputAddCost = Number(event.target.value);
 }
 
 const onClickAddPurchase = () => {
-  if (!valInput1 || !valInput2) {
+  if (!valInputAddText || !valInputAddCost) {
     alert('Заполните все поля!');
   } else {
-    allCost += valInput2;
+    allCost += valInputAddCost;
 
     allPurchase.push({
-      text: valInput1,
+      text: valInputAddText,
       date: today,
-      cost: valInput2
+      cost: valInputAddCost
     });
 
     localStorage.setItem('allCost', JSON.stringify(allCost));
     localStorage.setItem('purchase', JSON.stringify(allPurchase));
   
-    valInput1 = '';
-    input1.value = '';
-    valInput2 = '';
-    input2.value = '';
+    valInputAddText = '';
+    inputAddTest.value = '';
+    valInputAddCost = '';
+    inputAddCost.value = '';
   
     render(-1);
   }
@@ -90,21 +83,21 @@ const onClickDelete = (index) => {
 }
 
 const onClickDone = (index) => {
-  inputText = document.getElementById('id-main-inf-input');
-  inputDate = document.getElementById('id-main-inf-input-date');
-  inputCost = document.getElementById('id-cost-one-input');
+  const inputEditText = document.getElementById('id-main-inf-input');
+  const inputEditDate = document.getElementById('id-main-inf-input-date');
+  const inputEditCost = document.getElementById('id-cost-one-input');
   allCost -= allPurchase[index].cost;
 
-  if (!inputText.value || !inputDate.value || !inputCost.value || inputCost.value < 0) {
+  if (!inputEditText.value || !inputEditDate.value || !inputEditCost.value || inputEditCost.value < 0) {
     alert('Заполните все поля или введите правильные значения!');
   } else {
     allPurchase[index] = {
-      text: inputText.value,
-      date: inputDate.value,
-      cost: Number(inputCost.value)
+      text: inputEditText.value,
+      date: inputEditDate.value,
+      cost: Number(inputEditCost.value)
     };
 
-    allCost += Number(inputCost.value);
+    allCost += Number(inputEditCost.value);
 
     localStorage.setItem('allCost', JSON.stringify(allCost));
     localStorage.setItem('purchase', JSON.stringify(allPurchase));
@@ -127,14 +120,14 @@ const render = (indInput) => {
     list.removeChild(list.firstChild);
   }
 
-  allCost ? allCostText.innerText = `Итого: ${allCost} р.` : allCostText.innerText = 'Итого: 0 р.';
+  allCost ? allCostText.innerText = `Итого: ${allCost || 0} р.` : allCostText.innerText = 'Итого: 0 р.';
 
   allPurchase.forEach((element, index) => {
     const purchase = document.createElement('div');
     purchase.className = 'block-purchase';
-    purchase.id = `purchase-${index}`;
 
     let mainText = '';
+    let dateText = '';
     let costText = '';
     let blockImg = '';
     let imageEdit = '';
@@ -169,15 +162,11 @@ const render = (indInput) => {
 
       imageDone = document.createElement('img');
       imageDone.src = 'Images/tick.png';
-      imageDone.onclick = () => {
-        onClickDone(index);
-      }
+      imageDone.onclick = () => onClickDone(index);
 
       imageClose = document.createElement('img');
       imageClose.src = 'Images/close.png';
-      imageClose.onclick = () => {
-        onClickClose();
-      }
+      imageClose.onclick = () => onClickClose();
 
       blockImg.appendChild(imageDone);
       blockImg.appendChild(imageClose);
@@ -193,7 +182,11 @@ const render = (indInput) => {
     } else {
       mainText = document.createElement('p');
       mainText.className = 'main-inf';
-      mainText.innerText = `${index + 1}) ${element.text} ${element.date}`
+      mainText.innerText = `${index + 1}) ${element.text}`;
+
+      dateText = document.createElement('p');
+      dateText.className = 'date';
+      dateText.innerText = `${element.date}`;
 
       costText = document.createElement('p');
       costText.className = 'cost-one';
@@ -204,20 +197,17 @@ const render = (indInput) => {
 
       imageEdit = document.createElement('img');
       imageEdit.src = 'Images/pencil.png';
-      imageEdit.onclick = () => {
-        onClickEdit(index);
-      }
+      imageEdit.onclick = () => onClickEdit(index);
 
       imageDelete = document.createElement('img');
       imageDelete.src = 'Images/delete.png';
-      imageDelete.onclick = () => {
-        onClickDelete(index);
-      }
+      imageDelete.onclick = () => onClickDelete(index);
 
       blockImg.appendChild(imageEdit);
       blockImg.appendChild(imageDelete);
 
       purchase.appendChild(mainText);
+      purchase.appendChild(dateText);
       purchase.appendChild(costText);
       purchase.appendChild(blockImg);
 
