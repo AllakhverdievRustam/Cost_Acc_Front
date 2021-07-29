@@ -6,13 +6,6 @@ let inputAddTest = null;
 let valInputAddCost = ''
 let inputAddCost = null;
 
-let valInputTextEditOne = ''
-let inputTextEditOne = null;
-let valInputDateEditOne = ''
-let inputDateEditOne = null;
-let valInputCostEditOne = ''
-let inputCostEditOne = null;
-
 const now = new Date();
 const dd = String(now.getDate()).padStart(2, '0');
 const mm = String(now.getMonth() + 1).padStart(2, '0');
