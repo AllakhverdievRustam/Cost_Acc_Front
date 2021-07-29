@@ -34,7 +34,7 @@ window.onload = async () => {
   const result = await responseGet.json();
   allPurchase = result.data;
 
-  render(-1);
+  render(-1, -1);
 }
 
 const updateValue1 = (event) => {
@@ -43,6 +43,72 @@ const updateValue1 = (event) => {
 
 const updateValue2 = (event) => {
   valInputAddCost = Number(event.target.value);
+}
+
+const updateValueText = async (event, index) => {
+  if (event.target.value) {
+    const responsePatch = await fetch('http://localhost:4000/editPurchase', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Access-Control-Allaw-Origin': '*'
+      },
+      body: JSON.stringify({
+        _id: allPurchase[index]._id,
+        text: event.target.value
+      })
+    });
+    const result = await responsePatch.json();
+    allPurchase = result.data;
+
+    render(-1, -1);
+  } else {
+    alert('Заполните поле!');
+  }
+}
+
+const updateValueDate = async (event, index) => {
+  if (event.target.value) {
+    const responsePatch = await fetch('http://localhost:4000/editPurchase', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Access-Control-Allaw-Origin': '*'
+      },
+      body: JSON.stringify({
+        _id: allPurchase[index]._id,
+        date: event.target.value
+      })
+    });
+    const result = await responsePatch.json();
+    allPurchase = result.data;
+
+    render(-1, -1);
+  } else {
+    alert('Заполните поле!');
+  }
+}
+
+const updateValueCost = async (event, index) => {
+  if (event.target.value) {
+    const responsePatch = await fetch('http://localhost:4000/editPurchase', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Access-Control-Allaw-Origin': '*'
+      },
+      body: JSON.stringify({
+        _id: allPurchase[index]._id,
+        cost: event.target.value
+      })
+    });
+    const result = await responsePatch.json();
+    allPurchase = result.data;
+
+    render(-1, -1);
+  } else {
+    alert('Заполните поле!');
+  }
 }
 
 const onClickAddPurchase = async () => {
@@ -69,7 +135,7 @@ const onClickAddPurchase = async () => {
     valInputAddCost = '';
     inputAddCost.value = '';
   
-    render(-1);
+    render(-1, -1);
   }
 }
 
@@ -85,7 +151,7 @@ const onClickDelete = async (index) => {
   const result = await responseDelete.json();
   allPurchase = result.data;
 
-  render(-1);
+  render(-1, -1);
 }
 
 const onClickDone = async (index) => {
@@ -112,15 +178,30 @@ const onClickDone = async (index) => {
     const result = await responsePatch.json();
     allPurchase = result.data;
 
-    render(-1);
+    render(-1, -1);
   }
 }
 
 const onClickClose = () => {
-  render(-1);
+  render(-1, -1);
 }
 
-const render = (indInput) => {
+const onDblClickText = (index) => {
+  const editTextInd = 'text';
+  render(-1, editTextInd, index);
+}
+
+const onDblClickDate = (index) => {
+  const editDateInd = 'date';
+  render(-1, editDateInd, index);
+}
+
+const onDblClickCost = (index) => {
+  const editCostInd = 'cost';
+  render(-1, editCostInd, index);
+}
+
+const render = (indInput, editOneFlag, editOneInd) => {
   allCost = 0;
 
   allPurchase.forEach(element => allCost += element.cost);
@@ -174,17 +255,55 @@ const render = (indInput) => {
       purchase.appendChild(dateTextInput);
       purchase.appendChild(costTextInput);
     } else {
-      const mainText = document.createElement('p');
-      mainText.className = 'main-inf';
-      mainText.innerText = `${index + 1}) ${element.text}`;
+      let mainText = '';
+      if (editOneFlag === 'text' && index === editOneInd) {
+        mainText = document.createElement('input');
+        mainText.type = 'text';
+        mainText.className = 'main-inf-input';
+        mainText.id = 'id-main-inf-input-edit';
+        mainText.value = allPurchase[index].text;
+ 
+        mainText.addEventListener('blur', (e) => updateValueText(e, index)); 
+      } else {
+        mainText = document.createElement('p');
+        mainText.className = 'main-inf';
+        mainText.innerText = `${index + 1}) ${element.text}`;
+        mainText.ondblclick = () => onDblClickText(index);
+      }
 
-      const dateText = document.createElement('p');
-      dateText.className = 'date';
-      dateText.innerText = `${element.date}`;
+      let dateText = '';
+      if (editOneFlag === 'date' && index === editOneInd) {
+        dateText = document.createElement('input');
+        dateText.type = 'text';
+        dateText.className = 'main-inf-input-date';
+        dateText.id = 'id-main-inf-input-date-edit';
+        dateText.value = allPurchase[index].date;
 
-      const costText = document.createElement('p');
-      costText.className = 'cost-one';
-      costText.innerText = `${element.cost} р.`
+        dateText.addEventListener('blur', (e) => updateValueDate(e, index));
+
+      } else {
+        dateText = document.createElement('p');
+        dateText.className = 'date';
+        dateText.innerText = `${element.date}`;
+        dateText.ondblclick = () => onDblClickDate(index);
+      }
+
+      let costText = '';
+      if (editOneFlag === 'cost' && index === editOneInd) {
+        costText = document.createElement('input');
+        costText.type = 'number';
+        costText.className = 'cost-one-input';
+        costText.id = 'id-cost-one-input-edit';
+        costText.value = allPurchase[index].cost;
+
+        costText.addEventListener('blur', (e) => updateValueCost(e, index));
+
+      } else {
+        costText = document.createElement('p');
+        costText.className = 'cost-one';
+        costText.innerText = `${element.cost} р.`;
+        costText.ondblclick = () => onDblClickCost(index);
+      }
 
       const imageEdit = document.createElement('img');
       imageEdit.src = 'Images/pencil.png';
@@ -205,7 +324,5 @@ const render = (indInput) => {
     purchase.appendChild(blockImg);
 
     list.appendChild(purchase);
-
-    blockAllCost.appendChild(allCostText);
   });
 }
