@@ -1,4 +1,4 @@
-let allPurchase = JSON.parse(localStorage.getItem('purchase')) || [];
+let allPurchase = [];
 
 let valInputAddText = ''
 let inputAddTest = null;
@@ -12,24 +12,27 @@ const mm = String(now.getMonth() + 1).padStart(2, '0');
 const yyyy = now.getFullYear();
 const today = mm + '/' + dd + '/' + yyyy;
 
-let allCost = JSON.parse(localStorage.getItem('allCost')) || 0;
+let allCost = 0;
 let blockAllCost = '';
 let allCostText = '';
 
-window.onload = () => {
+window.onload = async () => {
   inputAddTest = document.getElementById('input-id-1');
   inputAddTest.addEventListener('change', updateValue1);
 
   inputAddCost = document.getElementById('input-id-2');
   inputAddCost.addEventListener('change', updateValue2);
 
-  localStorage.setItem('allCost', JSON.stringify(allCost));
-  localStorage.setItem('purchase', JSON.stringify(allPurchase));
-
   blockAllCost = document.getElementsByClassName('block-cost-all')[0];
   allCostText = document.createElement('p');
   allCostText.innerText = `Итого: ${allCost} р.`;
   blockAllCost.appendChild(allCostText);
+
+  const responseGet = await fetch('http://localhost:4000/getAllPurchase', {
+    method: 'GET'
+  });
+  const result = await responseGet.json();
+  allPurchase = result.data;
 
   render(-1);
 }
@@ -42,21 +45,25 @@ const updateValue2 = (event) => {
   valInputAddCost = Number(event.target.value);
 }
 
-const onClickAddPurchase = () => {
+const onClickAddPurchase = async () => {
   if (!valInputAddText || !valInputAddCost) {
     alert('Заполните все поля!');
   } else {
-    allCost += valInputAddCost;
-
-    allPurchase.push({
-      text: valInputAddText,
-      date: today,
-      cost: valInputAddCost
+    const responsePost = await fetch('http://localhost:4000/addNewPurchase', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Access-Control-Allaw-Origin': '*'
+      },
+      body: JSON.stringify({
+        text: valInputAddText,
+        date: today,
+        cost: valInputAddCost
+      })
     });
+    const result = await responsePost.json();
+    allPurchase = result.data;
 
-    localStorage.setItem('allCost', JSON.stringify(allCost));
-    localStorage.setItem('purchase', JSON.stringify(allPurchase));
-  
     valInputAddText = '';
     inputAddTest.value = '';
     valInputAddCost = '';
@@ -71,36 +78,39 @@ const onClickEdit = (index) => {
   render(index);
 }
 
-const onClickDelete = (index) => {
-  allCost -= allPurchase[index].cost;
-
-  allPurchase.splice(index, 1);
-
-  localStorage.setItem('allCost', JSON.stringify(allCost));
-  localStorage.setItem('purchase', JSON.stringify(allPurchase));
+const onClickDelete = async (index) => {
+  const responseDelete = await fetch(`http://localhost:4000/deletePurchase?_id=${allPurchase[index]._id}`, {
+    method: 'DELETE'
+  });
+  const result = await responseDelete.json();
+  allPurchase = result.data;
 
   render(-1);
 }
 
-const onClickDone = (index) => {
+const onClickDone = async (index) => {
   const inputEditText = document.getElementById('id-main-inf-input');
   const inputEditDate = document.getElementById('id-main-inf-input-date');
   const inputEditCost = document.getElementById('id-cost-one-input');
-  allCost -= allPurchase[index].cost;
 
   if (!inputEditText.value || !inputEditDate.value || !inputEditCost.value || inputEditCost.value < 0) {
     alert('Заполните все поля или введите правильные значения!');
   } else {
-    allPurchase[index] = {
-      text: inputEditText.value,
-      date: inputEditDate.value,
-      cost: Number(inputEditCost.value)
-    };
-
-    allCost += Number(inputEditCost.value);
-
-    localStorage.setItem('allCost', JSON.stringify(allCost));
-    localStorage.setItem('purchase', JSON.stringify(allPurchase));
+    const responsePatch = await fetch('http://localhost:4000/editPurchase', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Access-Control-Allaw-Origin': '*'
+      },
+      body: JSON.stringify({
+        _id: allPurchase[index]._id,
+        text: inputEditText.value,
+        date: inputEditDate.value,
+        cost: Number(inputEditCost.value)
+      })
+    });
+    const result = await responsePatch.json();
+    allPurchase = result.data;
 
     render(-1);
   }
@@ -111,8 +121,9 @@ const onClickClose = () => {
 }
 
 const render = (indInput) => {
-  allCost = JSON.parse(localStorage.getItem('allCost'));
-  allPurchase = JSON.parse(localStorage.getItem('purchase'));
+  allCost = 0;
+
+  allPurchase.forEach(element => allCost += element.cost);
 
   const list = document.getElementsByClassName('block-list')[0];
 
@@ -120,7 +131,7 @@ const render = (indInput) => {
     list.removeChild(list.firstChild);
   }
 
-  allCostText.innerText = `Итого: ${allCost || 0} р.`;
+  allCostText.innerText = `Итого: ${allCost} р.`;
 
   allPurchase.forEach((element, index) => {
     const purchase = document.createElement('div');
