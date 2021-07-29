@@ -46,57 +46,69 @@ const updateValue2 = (event) => {
 }
 
 const updateValueText = async (event, index) => {
-  const responsePatch = await fetch('http://localhost:4000/editPurchase', {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8',
-      'Access-Control-Allaw-Origin': '*'
-    },
-    body: JSON.stringify({
-      _id: allPurchase[index]._id,
-      text: event.target.value
-    })
-  });
-  const result = await responsePatch.json();
-  allPurchase = result.data;
+  if (event.target.value) {
+    const responsePatch = await fetch('http://localhost:4000/editPurchase', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Access-Control-Allaw-Origin': '*'
+      },
+      body: JSON.stringify({
+        _id: allPurchase[index]._id,
+        text: event.target.value
+      })
+    });
+    const result = await responsePatch.json();
+    allPurchase = result.data;
 
-  render(-1, -1);
+    render(-1, -1);
+  } else {
+    alert('Заполните поле!');
+  }
 }
 
 const updateValueDate = async (event, index) => {
-  const responsePatch = await fetch('http://localhost:4000/editPurchase', {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8',
-      'Access-Control-Allaw-Origin': '*'
-    },
-    body: JSON.stringify({
-      _id: allPurchase[index]._id,
-      date: event.target.value
-    })
-  });
-  const result = await responsePatch.json();
-  allPurchase = result.data;
+  if (event.target.value) {
+    const responsePatch = await fetch('http://localhost:4000/editPurchase', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Access-Control-Allaw-Origin': '*'
+      },
+      body: JSON.stringify({
+        _id: allPurchase[index]._id,
+        date: event.target.value
+      })
+    });
+    const result = await responsePatch.json();
+    allPurchase = result.data;
 
-  render(-1, -1);
+    render(-1, -1);
+  } else {
+    alert('Заполните поле!');
+  }
 }
 
 const updateValueCost = async (event, index) => {
-  const responsePatch = await fetch('http://localhost:4000/editPurchase', {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8',
-      'Access-Control-Allaw-Origin': '*'
-    },
-    body: JSON.stringify({
-      _id: allPurchase[index]._id,
-      cost: event.target.value
-    })
-  });
-  const result = await responsePatch.json();
-  allPurchase = result.data;
+  if (event.target.value) {
+    const responsePatch = await fetch('http://localhost:4000/editPurchase', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Access-Control-Allaw-Origin': '*'
+      },
+      body: JSON.stringify({
+        _id: allPurchase[index]._id,
+        cost: event.target.value
+      })
+    });
+    const result = await responsePatch.json();
+    allPurchase = result.data;
 
-  render(-1, -1);
+    render(-1, -1);
+  } else {
+    alert('Заполните поле!');
+  }
 }
 
 const onClickAddPurchase = async () => {
