@@ -16,19 +16,23 @@ let allCost = 0;
 let blockAllCost = '';
 let allCostText = '';
 
-window.onload = () => {
+window.onload = async () => {
   inputAddTest = document.getElementById('input-id-1');
   inputAddTest.addEventListener('change', updateValue1);
 
   inputAddCost = document.getElementById('input-id-2');
   inputAddCost.addEventListener('change', updateValue2);
 
-  localStorage.setItem('allCost', JSON.stringify(allCost));
-
   blockAllCost = document.getElementsByClassName('block-cost-all')[0];
   allCostText = document.createElement('p');
   allCostText.innerText = `Итого: ${allCost} р.`;
   blockAllCost.appendChild(allCostText);
+
+  const responseGet = await fetch('http://localhost:4000/getAllPurchase', {
+    method: 'GET'
+  });
+  const result = await responseGet.json();
+  allPurchase = result.data;
 
   render(-1);
 }
@@ -57,6 +61,8 @@ const onClickAddPurchase = async () => {
         cost: valInputAddCost
       })
     });
+    const result = await responsePost.json();
+    allPurchase = result.data;
 
     valInputAddText = '';
     inputAddTest.value = '';
@@ -76,6 +82,8 @@ const onClickDelete = async (index) => {
   const responseDelete = await fetch(`http://localhost:4000/deletePurchase?_id=${allPurchase[index]._id}`, {
     method: 'DELETE'
   });
+  const result = await responseDelete.json();
+  allPurchase = result.data;
 
   render(-1);
 }
@@ -100,7 +108,9 @@ const onClickDone = async (index) => {
         date: inputEditDate.value,
         cost: Number(inputEditCost.value)
       })
-    })
+    });
+    const result = await responsePatch.json();
+    allPurchase = result.data;
 
     render(-1);
   }
@@ -110,18 +120,10 @@ const onClickClose = () => {
   render(-1);
 }
 
-const render = async (indInput) => {
-  const responseGet = await fetch('http://localhost:4000/getAllPurchase', {
-    method: 'GET'
-  });
-  let result = await responseGet.json();
-  allPurchase = result.data;
-
+const render = (indInput) => {
   allCost = 0;
 
-  allPurchase.forEach(element => {
-    allCost += element.cost;
-  });
+  allPurchase.forEach(element => allCost += element.cost);
 
   const list = document.getElementsByClassName('block-list')[0];
 
