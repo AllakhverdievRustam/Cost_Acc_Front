@@ -1,73 +1,73 @@
-let allPurchase = JSON.parse(localStorage.getItem('purchase')) || [];
+let allPurchase = [];
 
-let valInput1 = ''
-let input1 = null;
+let valInputAddText = ''
+let inputAddTest = null;
 
-let valInput2 = ''
-let input2 = null;
+let valInputAddCost = ''
+let inputAddCost = null;
 
-let valInputText = ''
-let inputText = null;
-let valInputDate = ''
-let inputDate = null;
-let valInputCost = ''
-let inputCost = null;
+const now = new Date();
+const dd = String(now.getDate()).padStart(2, '0');
+const mm = String(now.getMonth() + 1).padStart(2, '0');
+const yyyy = now.getFullYear();
+const today = mm + '/' + dd + '/' + yyyy;
 
-let now = new Date();
-let dd = String(now.getDate()).padStart(2, '0');
-let mm = String(now.getMonth() + 1).padStart(2, '0');
-let yyyy = now.getFullYear();
-let today = mm + '/' + dd + '/' + yyyy;
-
-let allCost = JSON.parse(localStorage.getItem('allCost'));
+let allCost = 0;
 let blockAllCost = '';
 let allCostText = '';
 
-window.onload = () => {
-  input1 = document.getElementById('input-id-1');
-  input1.addEventListener('change', updateValue1);
+window.onload = async () => {
+  inputAddTest = document.getElementById('input-id-1');
+  inputAddTest.addEventListener('change', updateValue1);
 
-  input2 = document.getElementById('input-id-2');
-  input2.addEventListener('change', updateValue2);
-
-  localStorage.setItem('allCost', JSON.stringify(allCost));
-  localStorage.setItem('purchase', JSON.stringify(allPurchase));
+  inputAddCost = document.getElementById('input-id-2');
+  inputAddCost.addEventListener('change', updateValue2);
 
   blockAllCost = document.getElementsByClassName('block-cost-all')[0];
   allCostText = document.createElement('p');
   allCostText.innerText = `Итого: ${allCost} р.`;
   blockAllCost.appendChild(allCostText);
 
+  const responseGet = await fetch('http://localhost:4000/getAllPurchase', {
+    method: 'GET'
+  });
+  const result = await responseGet.json();
+  allPurchase = result.data;
+
   render(-1);
 }
 
 const updateValue1 = (event) => {
-  valInput1 = event.target.value;
+  valInputAddText = event.target.value;
 }
 
 const updateValue2 = (event) => {
-  valInput2 = Number(event.target.value);
+  valInputAddCost = Number(event.target.value);
 }
 
-const onClickAddPurchase = () => {
-  if (!valInput1 || !valInput2) {
+const onClickAddPurchase = async () => {
+  if (!valInputAddText || !valInputAddCost) {
     alert('Заполните все поля!');
   } else {
-    allCost += valInput2;
-
-    allPurchase.push({
-      text: valInput1,
-      date: today,
-      cost: valInput2
+    const responsePost = await fetch('http://localhost:4000/addNewPurchase', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Access-Control-Allaw-Origin': '*'
+      },
+      body: JSON.stringify({
+        text: valInputAddText,
+        date: today,
+        cost: valInputAddCost
+      })
     });
+    const result = await responsePost.json();
+    allPurchase = result.data;
 
-    localStorage.setItem('allCost', JSON.stringify(allCost));
-    localStorage.setItem('purchase', JSON.stringify(allPurchase));
-  
-    valInput1 = '';
-    input1.value = '';
-    valInput2 = '';
-    input2.value = '';
+    valInputAddText = '';
+    inputAddTest.value = '';
+    valInputAddCost = '';
+    inputAddCost.value = '';
   
     render(-1);
   }
@@ -78,36 +78,39 @@ const onClickEdit = (index) => {
   render(index);
 }
 
-const onClickDelete = (index) => {
-  allCost -= allPurchase[index].cost;
-
-  allPurchase.splice(index, 1);
-
-  localStorage.setItem('allCost', JSON.stringify(allCost));
-  localStorage.setItem('purchase', JSON.stringify(allPurchase));
+const onClickDelete = async (index) => {
+  const responseDelete = await fetch(`http://localhost:4000/deletePurchase?_id=${allPurchase[index]._id}`, {
+    method: 'DELETE'
+  });
+  const result = await responseDelete.json();
+  allPurchase = result.data;
 
   render(-1);
 }
 
-const onClickDone = (index) => {
-  inputText = document.getElementById('id-main-inf-input');
-  inputDate = document.getElementById('id-main-inf-input-date');
-  inputCost = document.getElementById('id-cost-one-input');
-  allCost -= allPurchase[index].cost;
+const onClickDone = async (index) => {
+  const inputEditText = document.getElementById('id-main-inf-input');
+  const inputEditDate = document.getElementById('id-main-inf-input-date');
+  const inputEditCost = document.getElementById('id-cost-one-input');
 
-  if (!inputText.value || !inputDate.value || !inputCost.value || inputCost.value < 0) {
+  if (!inputEditText.value || !inputEditDate.value || !inputEditCost.value || inputEditCost.value < 0) {
     alert('Заполните все поля или введите правильные значения!');
   } else {
-    allPurchase[index] = {
-      text: inputText.value,
-      date: inputDate.value,
-      cost: Number(inputCost.value)
-    };
-
-    allCost += Number(inputCost.value);
-
-    localStorage.setItem('allCost', JSON.stringify(allCost));
-    localStorage.setItem('purchase', JSON.stringify(allPurchase));
+    const responsePatch = await fetch('http://localhost:4000/editPurchase', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Access-Control-Allaw-Origin': '*'
+      },
+      body: JSON.stringify({
+        _id: allPurchase[index]._id,
+        text: inputEditText.value,
+        date: inputEditDate.value,
+        cost: Number(inputEditCost.value)
+      })
+    });
+    const result = await responsePatch.json();
+    allPurchase = result.data;
 
     render(-1);
   }
@@ -118,8 +121,9 @@ const onClickClose = () => {
 }
 
 const render = (indInput) => {
-  allCost = JSON.parse(localStorage.getItem('allCost'));
-  allPurchase = JSON.parse(localStorage.getItem('purchase'));
+  allCost = 0;
+
+  allPurchase.forEach(element => allCost += element.cost);
 
   const list = document.getElementsByClassName('block-list')[0];
 
@@ -127,57 +131,41 @@ const render = (indInput) => {
     list.removeChild(list.firstChild);
   }
 
-  allCost ? allCostText.innerText = `Итого: ${allCost} р.` : allCostText.innerText = 'Итого: 0 р.';
+  allCostText.innerText = `Итого: ${allCost} р.`;
 
   allPurchase.forEach((element, index) => {
     const purchase = document.createElement('div');
     purchase.className = 'block-purchase';
-    purchase.id = `purchase-${index}`;
 
-    let mainText = '';
-    let costText = '';
-    let blockImg = '';
-    let imageEdit = '';
-    let imageDelete = '';
-    let mainTextInput = '';
-    let costTextInput = '';
-    let dateTextInput = '';
-    let imageClose = '';
-    let imageDone = '';
+    const blockImg = document.createElement('div');
+    blockImg.className = 'block-img';
 
     if (index === indInput) {
-      mainTextInput = document.createElement('input');
+      const mainTextInput = document.createElement('input');
       mainTextInput.type = 'text';
       mainTextInput.className = 'main-inf-input';
       mainTextInput.id = 'id-main-inf-input';
       mainTextInput.value = allPurchase[index].text;
 
-      dateTextInput = document.createElement('input');
+      const dateTextInput = document.createElement('input');
       dateTextInput.type = 'text';
       dateTextInput.className = 'main-inf-input-date';
       dateTextInput.id = 'id-main-inf-input-date';
       dateTextInput.value = allPurchase[index].date;
 
-      costTextInput = document.createElement('input');
+      const costTextInput = document.createElement('input');
       costTextInput.type = 'number';
       costTextInput.className = 'cost-one-input';
       costTextInput.id = 'id-cost-one-input';
       costTextInput.value = allPurchase[index].cost;
 
-      blockImg = document.createElement('div');
-      blockImg.className = 'block-img';
-
-      imageDone = document.createElement('img');
+      const imageDone = document.createElement('img');
       imageDone.src = 'Images/tick.png';
-      imageDone.onclick = () => {
-        onClickDone(index);
-      }
+      imageDone.onclick = () => onClickDone(index);
 
-      imageClose = document.createElement('img');
+      const imageClose = document.createElement('img');
       imageClose.src = 'Images/close.png';
-      imageClose.onclick = () => {
-        onClickClose();
-      }
+      imageClose.onclick = () => onClickClose();
 
       blockImg.appendChild(imageDone);
       blockImg.appendChild(imageClose);
@@ -185,45 +173,39 @@ const render = (indInput) => {
       purchase.appendChild(mainTextInput);
       purchase.appendChild(dateTextInput);
       purchase.appendChild(costTextInput);
-      purchase.appendChild(blockImg);
-
-      list.appendChild(purchase);
-
-      blockAllCost.appendChild(allCostText);
     } else {
-      mainText = document.createElement('p');
+      const mainText = document.createElement('p');
       mainText.className = 'main-inf';
-      mainText.innerText = `${index + 1}) ${element.text} ${element.date}`
+      mainText.innerText = `${index + 1}) ${element.text}`;
 
-      costText = document.createElement('p');
+      const dateText = document.createElement('p');
+      dateText.className = 'date';
+      dateText.innerText = `${element.date}`;
+
+      const costText = document.createElement('p');
       costText.className = 'cost-one';
       costText.innerText = `${element.cost} р.`
 
-      blockImg = document.createElement('div');
-      blockImg.className = 'block-img';
-
-      imageEdit = document.createElement('img');
+      const imageEdit = document.createElement('img');
       imageEdit.src = 'Images/pencil.png';
-      imageEdit.onclick = () => {
-        onClickEdit(index);
-      }
+      imageEdit.onclick = () => onClickEdit(index);
 
-      imageDelete = document.createElement('img');
+      const imageDelete = document.createElement('img');
       imageDelete.src = 'Images/delete.png';
-      imageDelete.onclick = () => {
-        onClickDelete(index);
-      }
+      imageDelete.onclick = () => onClickDelete(index);
 
       blockImg.appendChild(imageEdit);
       blockImg.appendChild(imageDelete);
 
       purchase.appendChild(mainText);
+      purchase.appendChild(dateText);
       purchase.appendChild(costText);
-      purchase.appendChild(blockImg);
-
-      list.appendChild(purchase);
-
-      blockAllCost.appendChild(allCostText);
     }
+
+    purchase.appendChild(blockImg);
+
+    list.appendChild(purchase);
+
+    blockAllCost.appendChild(allCostText);
   });
 }

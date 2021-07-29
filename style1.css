@@ -1,0 +1,391 @@
+/* Сброс дефолтных стилей браузеров */
+/* Это нужно для корректного отображения во всех браузерах */
+*, *::before, *::after {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p,
+blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img,
+ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center,
+dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot,
+thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer,
+header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+/* Глобальные стили */
+body {
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  position: relative;
+  font-size: 62.5%;
+  min-height: 100%;
+  line-height: 1;
+  background-color: rgb(204, 245, 255);
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: auto;
+  width: 800px;
+  margin: auto;
+  background-color: rgb(204, 245, 255);
+  padding: 20px;
+  box-shadow: 5px 5px 20px black;
+  border-radius: 10px;
+  margin-top: 7px;
+  margin-bottom: 7px;
+}
+
+h1 {
+  color: black;
+  font-size: 38px;
+  font-weight:lighter;
+  font-style: italic;
+  margin-bottom: 35px;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.block-add {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: auto;
+}
+
+.block-input-1 {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  height: auto;
+  width: 45%;
+}
+
+.block-add p {
+  color: black;
+  font-size: 14px;
+  font-weight:lighter;
+  margin-bottom: 7px;
+}
+
+.block-input-1 input {
+  width: 100%;
+  height: 50px;
+  border: 1px solid silver;
+  border-radius: 5px;
+  font-size: 15px;
+  padding-left: 15px;
+  background-color: rgba(255, 255, 255, 1);
+}
+
+.block-input-2 {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  height: auto;
+  width: 30%;
+}
+
+.block-input-2 input {
+  width: 100%;
+  height: 50px;
+  border: 1px solid silver;
+  border-radius: 5px;
+  font-size: 15px;
+  padding-left: 15px;
+  background-color: rgba(255, 255, 255, 1);
+}
+
+.block-add button {
+  width: 17%;
+  height: 50px;
+  border: none;
+  border-radius: 5px;
+  background-color: rgb(106, 192, 142);
+  color: black;
+  font-weight: 100;
+  font-size: 18px;
+  margin-top: auto;
+  cursor: pointer;
+}
+
+.block-add button:hover {
+  background-color: rgba(106, 192, 142, 0.7);
+}
+
+
+.block-cost-all {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  height: auto;
+  color: black;
+  font-weight: 100;
+  font-size: 24px;
+  margin: 30px 0 10px 0;
+}
+
+.block-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  height: 250px;
+  overflow: scroll;
+}
+
+.block-list::-webkit-scrollbar {
+  width: 0;
+}
+
+.block-purchase {
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  margin: 20px 0px;
+}
+
+.main-inf-input {
+  width: 30%;
+  height: 40px;
+  border: 1px solid silver;
+  border-radius: 5px;
+  font-size: 24px;
+  background-color: rgba(255, 255, 255, 1);
+}
+
+.main-inf-input-date {
+  width: 30%;
+  height: 40px;
+  border: 1px solid silver;
+  border-radius: 5px;
+  font-size: 24px;
+  background-color: rgba(255, 255, 255, 1);
+}
+
+.main-inf {
+  width: 45%;
+  color: black;
+  font-weight: 100;
+  font-size: 24px;
+  line-height: 1.5;
+  word-wrap: break-word;
+  text-align: left;
+}
+
+.date {
+  width: 20%;
+  color: black;
+  font-weight: 100;
+  font-size: 24px;
+  line-height: 1.5;
+  word-wrap: break-word;
+  text-align: center;
+}
+
+.cost-one-input {
+  width: 15%;
+  height: 40px;
+  border: 1px solid silver;
+  border-radius: 5px;
+  font-size: 24px;
+  background-color: rgba(255, 255, 255, 1);
+}
+
+.cost-one {
+  width: 15%;
+  color: black;
+  font-weight: 100;
+  font-size: 24px;
+  word-wrap: break-word;
+  text-align: center;
+}
+
+.block-img {
+  height: auto;
+  width: 7%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.block-img img {
+  width: 20px;
+  height: 20px;
+  margin-left: auto;
+  margin-left: 0px;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 815px) {
+  .container {
+    width: 600px;
+  }
+
+  .block-img {
+    width: 10%;
+  }
+
+  .date {
+    width: 22%;
+  }
+
+  .main-inf {
+    width: 40%;
+  }
+}
+
+@media screen and (max-width: 615px) {
+  .container {
+    width: 400px;
+  }
+
+  h1 {
+    font-size: 35px;
+  }
+
+  .block-add {
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .block-input-1 {
+    width: 100%;
+  }
+  
+  .block-input-1 input {
+    width: 70%;
+  }
+  
+  .block-input-2 {
+    width: 100%;
+    margin-top: 20px;
+  }
+  
+  .block-input-2 input {
+    width: 70%;
+  }
+  
+  .block-add button {
+    width: 30%;
+    margin-top: 20px;
+  }
+
+  .main-inf {
+    font-size: 20px;
+  }
+
+  .date {
+    width: 26%;
+    font-size: 18px;
+  }
+
+  .main-inf-input {
+    font-size: 20px;
+    height: 50px;
+  }
+
+  .main-inf-input-date {
+    font-size: 20px;
+    height: 50px;
+  }
+
+  .cost-one-input {
+    width: 20%;
+    font-size: 20px;
+    height: 50px;
+  }
+
+  .cost-one {
+    width: 17%;
+    font-size: 18px;
+  }
+  
+  .block-img {
+    width: 7%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+  
+  .block-img img {
+    width: 17px;
+    height: 17px;
+    margin: 5px 0;
+  }
+}
+
+@media screen and (max-width: 415px) {
+  .container {
+    height: 98vh;
+    width: 95%;
+    padding: 10px;
+  }
+
+  h1 {
+    font-size: 30px;
+  }
+
+  .block-list {
+    height: 100%;
+  }
+  
+  .block-input-1 input {
+    width: 90%;
+  }
+  
+  .block-input-2 input {
+    width: 90%;
+  }
+  
+  .block-add button {
+    width: 50%;
+    margin-top: 20px;
+  }
+
+  .block-cost-all {
+    font-size: 22px;
+  }
+
+  .main-inf {
+    font-size: 16px;
+    width: 45%;
+  }
+
+  .date {
+    font-size: 14px;
+    width: 24%;
+  }
+  
+  .cost-one {
+    font-size: 14px;
+    width: 19%;
+  }
+  
+  .block-img {
+    width: 8%;
+  }
+}
